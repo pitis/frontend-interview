@@ -108,6 +108,7 @@ export default function PurchasesPage() {
                       onChange={setSelectedProductIds}
                       placeholder="Select Products"
                       searchPlaceholder="Search products..."
+                      selectedText="{count} products selected"
                     />
                   )}
                 </div>
@@ -132,6 +133,7 @@ export default function PurchasesPage() {
                       onChange={setSelectedUserIds}
                       placeholder="Select Users"
                       searchPlaceholder="Search users..."
+                      selectedText="{count} users selected"
                     />
                   )}
                 </div>
