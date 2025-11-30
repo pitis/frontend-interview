@@ -1,6 +1,5 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HttpLink } from '@apollo/client'
 import {
   ApolloNextAppProvider,
@@ -8,15 +7,6 @@ import {
   InMemoryCache,
 } from '@apollo/experimental-nextjs-app-support'
 import type { ReactNode } from 'react'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
-    },
-  },
-})
 
 function makeClient() {
   const httpLink = new HttpLink({
@@ -31,10 +21,8 @@ function makeClient() {
 
 export function Providers({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ApolloNextAppProvider makeClient={makeClient}>
-        {children}
-      </ApolloNextAppProvider>
-    </QueryClientProvider>
+    <ApolloNextAppProvider makeClient={makeClient}>
+      {children}
+    </ApolloNextAppProvider>
   )
 }
