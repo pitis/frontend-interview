@@ -1,129 +1,197 @@
-# Frontend Interview Challenge
+# Frontend Interview Project
 
-> [!IMPORTANT]
-> You should have received a google doc together with this repository that explains in detail the scope and context of the exercise, together with it's acceptance criteria and any other necessary information for the completion of the challenge.
+A full-stack application for browsing and filtering purchases using Next.js, Apollo Client, and GraphQL.
 
-## Part 1 - Implement a re-usable multi-selection component
+## 🚀 Features
 
-Develop a reusable and responsive multi-selection component based on the provided Figma design that can be used within different contexts (you need to log in to be able to view details about the components):
+### Core Functionality
 
-https://www.figma.com/design/WvBKY6iRvC6iVN35VQgNIP/Eversports---Front-End-Task?node-id=1-821
+- **Multi-select Filters**: Filter purchases by products and users with an accessible multi-select component
+- **Cursor-based Pagination**: Load more purchases with "Load More" functionality (30 items per page)
+- **Real-time Search**: Search through 300 products and 100 users
+- **Responsive Grid Layout**:
+  - 3 columns on desktop (lg)
+  - 2 columns on tablet (md)
+  - 1 column on mobile
+- **Image Optimization**: Next.js Image component with proper image handling
+- **Comprehensive Testing**: Vitest with React Testing Library (30 tests)
 
-> [!NOTE]
-> Since there’s no design system provided for you, feel free to either reach out to any component library that you would like to use to help you with the building blocks for the UI or to implement the components themselves from scratch. The design specs from figma should be respected and match as close as possible independently of which solution you choose.
+### Technical Implementation
 
-### 🎯 Acceptance Criteria
+- ✅ Apollo Client for GraphQL data fetching
+- ✅ Custom hooks organized by domain (products, users, purchases)
+- ✅ TypeScript throughout
+- ✅ Tailwind CSS with shadcn/ui components
+- ✅ Proper ARIA attributes for accessibility
+- ✅ Loading states with skeleton components
+- ✅ Error handling
 
-- As a user I can search for specific products.
-- As a user I can see the list of queried items.
-- As a user I can select or deselect all products at once.
-- As a user I can select/deselect each product individually.
-- As a user I can cancel the selection process and revert any changes by clicking the cancel button or clicking outside of the dropdown.
-- As a user I can apply my product selection by clicking the apply button.
-- As a user I can use the filter in different types of screen sizes.
+## 📁 Project Structure
 
-## Part 2 - Integrate the component within a page
+```
+applications/
+├── graphql-server/          # Apollo Server with mock data
+│   └── server.ts           # 300 products, 100 users, 150 purchases
+└── next-boilerplate-client/
+    └── src/
+        ├── app/
+        │   ├── page.tsx                    # Main purchases page
+        │   ├── multiselect/page.tsx        # MultiSelect demo page
+        │   ├── components/
+        │   │   ├── MultiSelect/            # Multi-select component
+        │   │   │   ├── MultiSelect.tsx
+        │   │   │   ├── MultiSelect.test.tsx (16 tests)
+        │   │   │   └── index.ts
+        │   │   ├── PurchaseCard/           # Purchase card component
+        │   │   │   ├── PurchaseCard.tsx
+        │   │   │   ├── PurchaseCard.test.tsx (14 tests)
+        │   │   │   └── index.ts
+        │   │   └── PurchasesList.tsx       # Purchase list with pagination
+        │   └── hooks/
+        │       ├── products/               # Product queries
+        │       ├── users/                  # User queries
+        │       └── purchases/              # Purchase queries with pagination
+        └── vitest.config.ts
+```
 
-Build a page that shows a list of purchased products by users leveraging the component from part 1 to allow for the filtering of both products and users. This list should show the purchases that are the result of applying those filters.
+## 🛠️ Setup & Installation
 
-The UI below is just a representation of how we expect the page to look, but feel free to customize it however you feel best, the important part is to see the component you developed from before in action within the context of a general web application.
+### Prerequisites
 
-In the page the user can interact with both a product and a user filter and see the filtered data when the filters are applied.
+- Node.js 18+ (using v22.18.0)
+- npm
 
-<p align="center">
-    <img width="599" alt="image" src="https://github.com/user-attachments/assets/dd806009-ab87-494a-bdd4-d3f31c814047">
-</p>
+### Installation
 
-### 🎯 Acceptance Criteria
+1. **Install dependencies:**
 
-- As a user I can filter purchases by specific products.
-- As a user I can filter purchases by specific users.
-- As a user I can see the results of my selection.
-- As a user I can clear the filter selection.
-- As a user I can use the filters in different types of screen sizes.
-
-## Repository Intro
-
-The repository is structured as a monorepo. To get started install all dependencies in the root folder.
-
-```sh
+```bash
 npm install
 ```
 
-In this repository you can find 2 folders:
+2. **Start the GraphQL server:**
 
-- `graphql-server` - A simple graphql mocked server with a single product query that should be used for the assignment. You are not expected to change anything in this folder or in the implementation of the resolver.
+```bash
+cd applications/graphql-server
+npm start
+```
 
-  ### Usage
+Server runs at `http://localhost:4000`
 
-  ```sh
-  npm run dev:server
-  ```
+3. **Start the Next.js client:**
 
-  This will start a graphql-server at http://localhost:4000/. You should be able to see the following:
+```bash
+cd applications/next-boilerplate-client
+npm run dev
+```
 
-    <img width="1796" alt="image" src="https://github.com/eversport/frontend-interview/assets/3718438/d0ead1b8-da66-4925-9d9f-cc6cc2de1863">
+Client runs at `http://localhost:3000`
 
-  When clicking `"Query your server"`, you should be able to see the graphql sandbox explorer where you can explore both the query and the data for the products/users/purchases resolver in order to get more comfortable with the schema. In the left sidebart you see an overview of all different available queries.
+## 🧪 Testing
 
-    <img width="1800" alt="image" src="https://github.com/eversport/frontend-interview/assets/3718438/4e23ca49-d075-47bc-ba8b-71559a18c68d">
+Run the test suite with Vitest:
 
-  Here is an example of a query you could use to fetch products:
+```bash
+cd applications/next-boilerplate-client
 
-  ```graphql
-  query ExampleQuery($first: Int, $after: String, $searchTerm: String) {
-    products(first: $first, after: $after, searchTerm: $searchTerm) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
-      }
-      nodes {
-        id
-        name
-      }
-    }
-  }
-  ```
+# Run tests in watch mode
+npm test
 
-- `next-boilerplate-client` - A bootstrapped NextJs application with a basic typescript + tailwind configuration with a simple apollo graphql config to fetch data from `graphql-server`. It contains at the root route, an example of the fetching of the products query and it's usage. Feel free to edit anything you want, to add or remove files, to use an alternative styling solution or even setup the graphql integration differently.
+# Run tests with UI
+npm run test:ui
 
-  ### Usage
+# Run tests with coverage
+npm run test:coverage
+```
 
-  ```sh
-  npm run dev:client
-  ```
+**Test Coverage:**
 
-  This will start a NextJs app at http://localhost:3000/. In it you will find a simple example of a client component that fetches data and displays the first 10 products.
+- MultiSelect: 16 tests (selection, search, accessibility)
+- PurchaseCard: 14 tests (rendering, data display, styling)
 
-    <img width="1800" alt="image" src="https://github.com/eversport/frontend-interview/assets/3718438/b62acbe8-1e39-4eac-a99e-7bcc8c6a5ed4">
+## 📄 Available Pages
 
-## 🗒️ Conditions
+- **`/`** - Main purchases page with filtering
+- **`/multiselect`** - Standalone MultiSelect component demo
 
-- You will have multiple days for the challenge, but most of our candidates spend around **8h to 10h** on this assignment.
-- You should put your code in GitHub or GitLab/Bitbucket and send us the link to your repository where we can find the source code. That means no ZIP files.
-- Please make sure to include any additional instructions in a readme in case you change something about the compilation or execution of the codebase.
+## 🎨 Design Features
 
-## 💻 Technologies:
+- **Shadcn/ui Components**: Button, Card, Skeleton
+- **Custom MultiSelect**:
+  - Search functionality
+  - Select all/deselect all
+  - Keyboard navigation (Escape to close)
+  - Click outside to close
+  - Loading states
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
+- **Hover Effects**: Cards have subtle hover shadow transitions
 
-We believe that great developers are not bound to a specific technology set, but no matter their toolbox they are able to think critically about how to structure and design good code, but because we would like you to work in our current modern stack we would like for this challenge to be as close as possible to the normal everyday stack you would work with. For that reason the challenge should be completed with:
+## 🔧 Implementation Notes
 
-#### Required
+### Image Handling
 
-- React - https://reactjs.org/
+The original server used an older version of Faker.js that generated image URLs pointing to non-existent resources. This was fixed by upgrading Faker.js to a newer version that provides reliable image URLs. Images are now configured with:
 
-#### Optional
+- Next.js Image component for optimization
+- Remote patterns in `next.config.mjs` for external image domains
+- Fallback background colors for better UX during image loads
 
-- TypeScript - https://www.typescriptlang.org/
-- Tailwind - https://tailwindcss.com/
-- NextJs - https://nextjs.org/
+### Pagination Implementation
 
-### Other Resources
+- Uses Apollo Client's `fetchMore` for cursor-based pagination
+- Loads 30 purchases initially
+- "Load More" button fetches next 30 purchases
+- Maintains scroll position during pagination
 
-- Apollo Documentation - https://www.apollographql.com/docs/
-- Shadcn/ui - https://ui.shadcn.com/
-- Radix - https://www.radix-ui.com/
-- Relay graphql cursor specs - https://relay.dev/graphql/connections.htm
+### State Management
 
-Best of luck and looking forward to what you are able to accomplish! 🙂
+- Apollo Client cache for GraphQL data
+- React state for UI (selected filters, search)
+- No additional state management library needed
+
+## 📊 Data
+
+- **Products**: 300 randomly generated products (Faker.js)
+- **Users**: 100 randomly generated users (Faker.js)
+- **Purchases**: 150 randomly generated purchases linking products and users
+
+## 🚦 Performance Considerations
+
+- Fetches all 300 products and 100 users upfront (small dataset)
+- Purchases use pagination (30 at a time)
+- Apollo Client caching reduces redundant queries
+- Next.js Image optimization for better load times
+
+## 🎯 Key Challenges Solved
+
+1. **Image Loading Issues**: Fixed unreliable Faker image URLs with proper Next.js configuration
+2. **Type Safety**: Full TypeScript coverage with proper types for GraphQL responses
+3. **Component Organization**: Folder-based structure with colocated tests
+4. **Accessibility**: Proper ARIA labels, keyboard navigation, and semantic HTML
+5. **Responsive Design**: Grid layout that adapts to all screen sizes
+
+## 🤖 AI Assistance
+
+See [AI-SUPPORT.md](./AI-SUPPORT.md) for details on where AI was used in this project.
+
+## 📝 Original Requirements
+
+All requirements from the original assignment have been implemented:
+
+- ✅ Multi-select component for filtering
+- ✅ GraphQL integration with Apollo Client
+- ✅ Pagination support
+- ✅ Responsive design
+- ✅ TypeScript
+- ✅ Testing setup
+- ✅ Clean component architecture
+
+## 🛡️ Technologies Used
+
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
+- **GraphQL**: Apollo Client, Apollo Server
+- **Testing**: Vitest, React Testing Library
+- **Data**: Faker.js
+
+---

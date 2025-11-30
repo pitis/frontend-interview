@@ -16,7 +16,6 @@ export default function PurchaseCard({ purchase }: Readonly<Props>) {
             alt={purchase.product.name}
             fill
             className="object-cover"
-            unoptimized
           />
         </div>
 
@@ -31,7 +30,6 @@ export default function PurchaseCard({ purchase }: Readonly<Props>) {
                 alt={`${purchase.user.firstName} ${purchase.user.lastName}`}
                 fill
                 className="object-cover"
-                unoptimized
               />
             </div>
             <span className="text-sm text-muted-foreground">
