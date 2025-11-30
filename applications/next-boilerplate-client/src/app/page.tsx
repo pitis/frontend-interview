@@ -36,8 +36,6 @@ export default function PurchasesPage() {
     error: purchasesError,
   } = usePurchases(selectedProductIds, selectedUserIds)
 
-  console.log(purchases, users, products)
-
   const error = productsError || usersError || purchasesError
 
   const productItems: MultiSelectItem[] = useMemo(
