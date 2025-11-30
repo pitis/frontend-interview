@@ -2,7 +2,7 @@ import { Card } from './ui/card'
 import { Button } from './ui/button'
 import { Skeleton } from './ui/skeleton'
 import type { Purchase } from '@/app/hooks/purchases/types'
-import PurchaseCard from './PurchaseCard'
+import { PurchaseCard } from './PurchaseCard'
 
 interface PurchasesListProps {
   purchases: Purchase[]
