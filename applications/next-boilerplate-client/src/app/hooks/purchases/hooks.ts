@@ -1,3 +1,5 @@
+'use client'
+
 import { gql, useQuery } from '@apollo/client'
 import type { Purchase } from './types'
 
@@ -39,26 +41,48 @@ const PURCHASES_QUERY = gql`
 `
 
 export function usePurchases(productIds: string[], userIds: string[]) {
-  const { data, loading, error } = useQuery(PURCHASES_QUERY, {
+  const { data, loading, error, fetchMore } = useQuery(PURCHASES_QUERY, {
     variables: {
       productIds: productIds.length > 0 ? productIds : undefined,
       userIds: userIds.length > 0 ? userIds : undefined,
-      first: 20,
+      first: 30,
     },
+    notifyOnNetworkStatusChange: true,
   })
 
+  const purchases = data?.purchases?.nodes || []
+  const hasNextPage = data?.purchases?.pageInfo?.hasNextPage || false
+  const endCursor = data?.purchases?.pageInfo?.endCursor
+
+  const handleFetchMore = () => {
+    if (!hasNextPage || !endCursor) return
+
+    fetchMore({
+      variables: {
+        after: endCursor,
+        first: 30,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev
+
+        return {
+          purchases: {
+            ...fetchMoreResult.purchases,
+            nodes: [
+              ...prev.purchases.nodes,
+              ...fetchMoreResult.purchases.nodes,
+            ],
+          },
+        }
+      },
+    })
+  }
+
   return {
-    data: {
-      pages: [
-        {
-          purchases: (data?.purchases?.nodes || []) as Purchase[],
-          pageInfo: data?.purchases?.pageInfo,
-        },
-      ],
-    },
+    data: purchases as Purchase[],
     isLoading: loading,
-    hasNextPage: data?.purchases?.pageInfo?.hasNextPage || false,
-    fetchNextPage: () => {},
+    hasNextPage,
+    fetchNextPage: handleFetchMore,
     error,
   }
 }

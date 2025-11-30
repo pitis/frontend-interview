@@ -19,7 +19,7 @@ export function PurchasesList({
 }: Readonly<PurchasesListProps>) {
   if (isLoading && purchases.length === 0) {
     return (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i} className="p-4">
             <div className="flex items-start gap-4">
@@ -47,10 +47,12 @@ export function PurchasesList({
   }
 
   return (
-    <div className="space-y-4">
-      {purchases.map((purchase) => (
-        <PurchaseCard key={purchase.id} purchase={purchase} />
-      ))}
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {purchases.map((purchase) => (
+          <PurchaseCard key={purchase.id} purchase={purchase} />
+        ))}
+      </div>
 
       {hasNextPage && (
         <div className="flex justify-center pt-4">

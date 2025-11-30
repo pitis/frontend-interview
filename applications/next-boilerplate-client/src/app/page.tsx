@@ -29,16 +29,15 @@ export default function PurchasesPage() {
   } = useUsers(userSearch)
 
   const {
-    data: purchasesData,
+    data: purchases,
     isLoading: purchasesLoading,
     hasNextPage,
     fetchNextPage,
     error: purchasesError,
   } = usePurchases(selectedProductIds, selectedUserIds)
 
-  console.log(purchasesData, users, products)
+  console.log(purchases, users, products)
 
-  const purchases = purchasesData?.pages.flatMap((page) => page.purchases) || []
   const error = productsError || usersError || purchasesError
 
   const productItems: MultiSelectItem[] = useMemo(
