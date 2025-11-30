@@ -2,6 +2,13 @@
 
 A full-stack application for browsing and filtering purchases using Next.js, Apollo Client, and GraphQL.
 
+> ⏱️ **Development Time**: Completed in approximately 5 hours
+
+## 📄 Available Pages
+
+- **`/`** - Main purchases page with filtering
+- **`/multiselect`** - Standalone MultiSelect component demo
+
 ## 🚀 Features
 
 ### Core Functionality
@@ -61,32 +68,6 @@ applications/
 - Node.js 18+ (using v22.18.0)
 - npm
 
-### Installation
-
-1. **Install dependencies:**
-
-```bash
-npm install
-```
-
-2. **Start the GraphQL server:**
-
-```bash
-cd applications/graphql-server
-npm start
-```
-
-Server runs at `http://localhost:4000`
-
-3. **Start the Next.js client:**
-
-```bash
-cd applications/next-boilerplate-client
-npm run dev
-```
-
-Client runs at `http://localhost:3000`
-
 ## 🧪 Testing
 
 Run the test suite with Vitest:
@@ -108,11 +89,6 @@ npm run test:coverage
 
 - MultiSelect: 16 tests (selection, search, accessibility)
 - PurchaseCard: 14 tests (rendering, data display, styling)
-
-## 📄 Available Pages
-
-- **`/`** - Main purchases page with filtering
-- **`/multiselect`** - Standalone MultiSelect component demo
 
 ## 🎨 Design Features
 
