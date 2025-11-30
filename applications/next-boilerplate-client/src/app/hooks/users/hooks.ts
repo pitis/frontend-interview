@@ -23,7 +23,7 @@ export function useUsers(searchTerm: string) {
   const { data, loading, error } = useQuery(USERS_QUERY, {
     variables: {
       searchTerm: searchTerm || undefined,
-      first: 20,
+      first: 100, // Fetch all users
     },
   })
 

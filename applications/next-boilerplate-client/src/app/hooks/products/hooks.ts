@@ -21,7 +21,7 @@ export function useProducts(searchTerm: string) {
   const { data, loading, error } = useQuery(PRODUCTS_QUERY, {
     variables: {
       searchTerm: searchTerm || undefined,
-      first: 20,
+      first: 300, // Fetch all products
     },
   })
 
