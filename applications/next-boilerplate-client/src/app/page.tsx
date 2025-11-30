@@ -1,42 +1,168 @@
 'use client'
 
-import { gql, useQuery } from '@apollo/client'
-import ExampleProductList from './components/ExampleProductList'
+import { useState, useMemo } from 'react'
+import { MultiSelect } from '@/app/components/MultiSelect'
+import type { MultiSelectItem } from '@/app/components/MultiSelect'
+import { PurchasesList } from '@/app/components/PurchasesList'
+import { Card } from '@/app/components/ui/card'
+import { Button } from '@/app/components/ui/button'
+import { useProducts } from '@/app/hooks/products/hooks'
+import { useUsers } from '@/app/hooks/users/hooks'
+import { usePurchases } from '@/app/hooks/purchases/hooks'
 
-const PRODUCTS_QUERY = gql`
-  query Products($first: Int) {
-    products(first: $first) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      nodes {
-        id
-        name
-      }
-    }
+export default function PurchasesPage() {
+  const [productSearch] = useState('')
+  const [userSearch] = useState('')
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([])
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+
+  const {
+    data: products = [],
+    isLoading: productsLoading,
+    error: productsError,
+  } = useProducts(productSearch)
+
+  const {
+    data: users = [],
+    isLoading: usersLoading,
+    error: usersError,
+  } = useUsers(userSearch)
+
+  const {
+    data: purchasesData,
+    isLoading: purchasesLoading,
+    hasNextPage,
+    fetchNextPage,
+    error: purchasesError,
+  } = usePurchases(selectedProductIds, selectedUserIds)
+
+  console.log(purchasesData, users, products)
+
+  const purchases = purchasesData?.pages.flatMap((page) => page.purchases) || []
+  const error = productsError || usersError || purchasesError
+
+  const productItems: MultiSelectItem[] = useMemo(
+    () => products.map((p) => ({ id: p.id, label: p.name })),
+    [products],
+  )
+
+  const userItems: MultiSelectItem[] = useMemo(
+    () =>
+      users.map((u) => ({
+        id: u.id,
+        label: `${u.firstName} ${u.lastName}`,
+      })),
+    [users],
+  )
+
+  const handleClearFilters = () => {
+    setSelectedProductIds([])
+    setSelectedUserIds([])
   }
-`
 
-export default function Home() {
-  const { loading, error, data } = useQuery(PRODUCTS_QUERY, {
-    variables: { first: 10 },
-  })
+  const handleNextPage = () => {
+    fetchNextPage()
+  }
 
-  if (error) return <p>Error: {error.message}</p>
+  const selectedProductCount = selectedProductIds.length
+  const selectedUserCount = selectedUserIds.length
 
   return (
-    <div className="flex sm:items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex flex-col gap-2 p-4 bg-white shadow-md rounded-md w-full h-auto sm:min-h-[480px] sm:min-w-[584px] sm:h-auto sm:w-auto">
-        <h1 className="text-2xl font-bold">Example Product List</h1>
-        {!data || loading ? (
-          <p>Loading products...</p>
-        ) : (
-          <ExampleProductList products={data.products.nodes} />
+    <main className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
+            Purchases
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Filter purchases by products and users to see transaction details
+          </p>
+        </div>
+
+        {error && (
+          <Card className="p-4 bg-destructive/10 border-destructive/50">
+            <p className="text-sm text-destructive">
+              {error instanceof Error ? error.message : 'An error occurred'}
+            </p>
+          </Card>
         )}
+
+        <Card className="p-4 sm:p-6">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="products-select"
+                  className="text-sm font-medium text-foreground mb-2 block"
+                >
+                  Products
+                </label>
+                <div id="products-select">
+                  {productsLoading ? (
+                    <div className="border rounded-md p-2 text-sm text-muted-foreground">
+                      Loading products...
+                    </div>
+                  ) : (
+                    <MultiSelect
+                      items={productItems}
+                      value={selectedProductIds}
+                      onChange={setSelectedProductIds}
+                      placeholder="Select Products"
+                      searchPlaceholder="Search products..."
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="users-select"
+                  className="text-sm font-medium text-foreground mb-2 block"
+                >
+                  Users
+                </label>
+                <div id="users-select">
+                  {usersLoading ? (
+                    <div className="border rounded-md p-2 text-sm text-muted-foreground">
+                      Loading users...
+                    </div>
+                  ) : (
+                    <MultiSelect
+                      items={userItems}
+                      value={selectedUserIds}
+                      onChange={setSelectedUserIds}
+                      placeholder="Select Users"
+                      searchPlaceholder="Search users..."
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {(selectedProductCount > 0 || selectedUserCount > 0) && (
+              <Button
+                onClick={handleClearFilters}
+                variant="outline"
+                className="w-full sm:w-auto bg-transparent"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
+        </Card>
+
+        <div>
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Results
+          </h2>
+          <PurchasesList
+            purchases={purchases}
+            isLoading={purchasesLoading}
+            hasNextPage={hasNextPage || false}
+            onNextPage={handleNextPage}
+          />
+        </div>
       </div>
-    </div>
+    </main>
   )
 }
