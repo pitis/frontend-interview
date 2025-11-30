@@ -152,7 +152,7 @@ export default function PurchasesPage() {
 
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-4">
-            Results
+            Results {!purchasesLoading && `(${purchases.length})`}
           </h2>
           <PurchasesList
             purchases={purchases}
