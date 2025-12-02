@@ -46,7 +46,6 @@ describe('MultiSelect', () => {
     const button = screen.getByRole('button')
     await user.click(button)
 
-    expect(screen.getByRole('listbox')).toBeInTheDocument()
     expect(screen.getByText('Select all')).toBeInTheDocument()
   })
 
@@ -194,7 +193,7 @@ describe('MultiSelect', () => {
     expect(mockOnChange).toHaveBeenCalledWith(['1', '2', '3', '4', '5'])
   })
 
-  it('deselects all visible items when "Select all" is clicked with all selected', async () => {
+  it('deselects all visible items when "Deselect all" is clicked with all selected', async () => {
     const user = userEvent.setup()
     render(
       <MultiSelect
@@ -206,7 +205,7 @@ describe('MultiSelect', () => {
     )
 
     await user.click(screen.getByRole('button'))
-    await user.click(screen.getByText('Select all'))
+    await user.click(screen.getByText('Deselect all'))
     await user.click(screen.getByText('Apply'))
 
     expect(mockOnChange).toHaveBeenCalledWith([])
@@ -228,7 +227,7 @@ describe('MultiSelect', () => {
     await user.click(screen.getByText('Cancel'))
 
     expect(mockOnChange).not.toHaveBeenCalled()
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Select all')).not.toBeInTheDocument()
   })
 
   it('closes dropdown when clicking outside', async () => {
@@ -246,12 +245,12 @@ describe('MultiSelect', () => {
     )
 
     await user.click(screen.getByText('Select items'))
-    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    expect(screen.getByText('Select all')).toBeInTheDocument()
 
     await user.click(screen.getByText('Outside button'))
 
     await waitFor(() => {
-      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+      expect(screen.queryByText('Select all')).not.toBeInTheDocument()
     })
   })
 
@@ -267,12 +266,12 @@ describe('MultiSelect', () => {
     )
 
     await user.click(screen.getByRole('button'))
-    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    expect(screen.getByText('Select all')).toBeInTheDocument()
 
     await user.keyboard('{Escape}')
 
     await waitFor(() => {
-      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+      expect(screen.queryByText('Select all')).not.toBeInTheDocument()
     })
   })
 
@@ -309,6 +308,6 @@ describe('MultiSelect', () => {
     expect(button).toBeDisabled()
 
     await user.click(button)
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Select all')).not.toBeInTheDocument()
   })
 })

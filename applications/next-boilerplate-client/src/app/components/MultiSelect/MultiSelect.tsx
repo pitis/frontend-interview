@@ -25,6 +25,7 @@ export interface MultiSelectProps {
   className?: string
   searchPlaceholder?: string
   selectAllText?: string
+  deselectAllText?: string
   cancelText?: string
   applyText?: string
   noResultsText?: string
@@ -42,6 +43,7 @@ export function MultiSelect({
   className,
   searchPlaceholder = 'Search',
   selectAllText = 'Select all',
+  deselectAllText = 'Deselect all',
   cancelText = 'Cancel',
   applyText = 'Apply',
   noResultsText = 'No items found',
@@ -209,81 +211,89 @@ export function MultiSelect({
           </div>
 
           <div className="max-h-[200px] overflow-y-auto">
-            {items.length === 0 ? (
-              <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                {emptyText}
-              </div>
-            ) : filteredItems.length === 0 ? (
-              <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                {noResultsText}
-              </div>
-            ) : (
-              <>
-                <label className="flex cursor-pointer items-center gap-3 px-3 py-2.5 border-b border-border hover:bg-accent transition-colors duration-150">
-                  <div
-                    className={cn(
-                      'flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors duration-150',
-                      allVisibleSelected || someVisibleSelected
-                        ? 'border-teal-500 bg-teal-500'
-                        : 'border-muted-foreground/50',
-                    )}
-                    role="checkbox"
-                    aria-checked={
-                      someVisibleSelected ? 'mixed' : allVisibleSelected
-                    }
-                  >
-                    {allVisibleSelected && (
-                      <Check className="h-3 w-3 text-white" />
-                    )}
-                    {someVisibleSelected && !allVisibleSelected && (
-                      <div className="h-0.5 w-2 bg-white" />
-                    )}
+            {(() => {
+              if (items.length === 0) {
+                return (
+                  <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                    {emptyText}
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={allVisibleSelected}
-                    onChange={toggleAll}
-                    className="sr-only"
-                    aria-label={selectAllText}
-                  />
-                  <span className="text-sm text-foreground">
-                    {selectAllText}
-                  </span>
-                </label>
+                )
+              }
 
-                {filteredItems.map((item) => (
-                  <label
-                    key={item.id}
-                    className="flex cursor-pointer items-center gap-3 px-3 py-2.5 hover:bg-accent transition-colors duration-150"
-                  >
+              if (filteredItems.length === 0) {
+                return (
+                  <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                    {noResultsText}
+                  </div>
+                )
+              }
+
+              return (
+                <>
+                  <label className="sticky top-0 z-10 flex cursor-pointer items-center gap-3 px-3 py-2.5 border-b border-border bg-white hover:bg-accent transition-colors duration-150">
                     <div
                       className={cn(
                         'flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors duration-150',
-                        internalSelection.includes(item.id)
+                        allVisibleSelected || someVisibleSelected
                           ? 'border-teal-500 bg-teal-500'
                           : 'border-muted-foreground/50',
                       )}
-                      role="checkbox"
-                      aria-checked={internalSelection.includes(item.id)}
+                      aria-hidden="true"
                     >
-                      {internalSelection.includes(item.id) && (
+                      {allVisibleSelected && (
                         <Check className="h-3 w-3 text-white" />
+                      )}
+                      {someVisibleSelected && !allVisibleSelected && (
+                        <div className="h-0.5 w-2 bg-white" />
                       )}
                     </div>
                     <input
                       type="checkbox"
-                      checked={internalSelection.includes(item.id)}
-                      onChange={() => toggleItem(item.id)}
+                      checked={allVisibleSelected}
+                      onChange={toggleAll}
                       className="sr-only"
-                      aria-label={item.label}
+                      aria-label={
+                        allVisibleSelected ? deselectAllText : selectAllText
+                      }
                     />
                     <span className="text-sm text-foreground">
-                      {item.label}
+                      {allVisibleSelected ? deselectAllText : selectAllText}
                     </span>
                   </label>
-                ))}
-              </>
-            )}
+
+                  {filteredItems.map((item) => (
+                    <label
+                      key={item.id}
+                      className="flex cursor-pointer items-center gap-3 px-3 py-2.5 hover:bg-accent transition-colors duration-150"
+                    >
+                      <div
+                        className={cn(
+                          'flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border transition-colors duration-150',
+                          internalSelection.includes(item.id)
+                            ? 'border-teal-500 bg-teal-500'
+                            : 'border-muted-foreground/50',
+                        )}
+                        aria-hidden="true"
+                      >
+                        {internalSelection.includes(item.id) && (
+                          <Check className="h-3 w-3 text-white" />
+                        )}
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={internalSelection.includes(item.id)}
+                        onChange={() => toggleItem(item.id)}
+                        className="sr-only"
+                        aria-label={item.label}
+                      />
+                      <span className="text-sm text-foreground">
+                        {item.label}
+                      </span>
+                    </label>
+                  ))}
+                </>
+              )
+            })()}
           </div>
 
           <footer className="flex items-center justify-between border-t border-border px-3 py-2">
